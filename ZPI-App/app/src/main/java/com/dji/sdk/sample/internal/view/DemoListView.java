@@ -93,6 +93,12 @@ public class DemoListView extends FrameLayout {
 
         // Build model for ListView
         ListItem.ListBuilder builder = new ListItem.ListBuilder();
+        builder.addGroup(R.string.component_listview_camera,
+                false,
+                // ... other GroupItems ...
+                new GroupItem(R.string.camera_listview_full_screen_video, FullScreenVideoView.class)
+                // ... other GroupItems ...
+        );
         builder.addGroup(R.string.component_listview_sdk_4_16,
                 false,
                 new GroupItem(R.string.uas_view, UASView.class),

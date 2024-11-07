@@ -55,43 +55,12 @@
         android:textSize="15dp"/>
     <!-- :nextFocusUp and :nextFocusLeft have been set to the id of this component
     to prevent the text_model_available from receiving focus again -->
-    <EditText
-        android:id="@+id/edittext_bridge_ip"
-        android:layout_width="150dp"
-        android:layout_height="55dp"
-        android:layout_below="@+id/text_model_available"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="25dp"
-        android:nextFocusUp="@id/edittext_bridge_ip"
-        android:nextFocusLeft="@id/edittext_bridge_ip"
-        android:maxLength="15"
-        android:hint="WSBridge IP"
-        android:textAllCaps="false"
-        android:maxLines="1"
-        android:digits="0123456789.\n"
-        android:inputType="numberDecimal"
-        android:imeOptions="actionDone"
-        android:textColor="@color/black"
-        android:textSize="15dp"/>
-
-    <Button
-        android:id="@+id/btn_bluetooth"
-        android:layout_width="150dp"
-        android:layout_height="55dp"
-        android:layout_below="@+id/edittext_bridge_ip"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="15dp"
-        android:background="@drawable/round_btn"
-        android:text="Bluetooth"
-        android:textAllCaps="false"
-        android:textColor="@color/common_text_color"
-        android:textSize="15dp"/>
 
     <Button
         android:id="@+id/btn_registerApp"
         android:layout_width="150dp"
         android:layout_height="55dp"
-        android:layout_below="@+id/btn_bluetooth"
+        android:layout_below="@+id/text_model_available"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="15dp"
         android:background="@drawable/round_btn"
@@ -101,23 +70,10 @@
         android:textSize="15dp"/>
 
     <Button
-        android:id="@+id/btn_registerAppForLDM"
-        android:layout_width="150dp"
-        android:layout_height="55dp"
-        android:layout_below="@+id/btn_registerApp"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="15dp"
-        android:background="@drawable/round_btn"
-        android:text="Register APP for LDM"
-        android:textAllCaps="false"
-        android:textColor="@color/common_text_color"
-        android:textSize="15dp"/>
-
-    <Button
         android:id="@+id/btn_open"
         android:layout_width="150dp"
         android:layout_height="55dp"
-        android:layout_below="@+id/btn_registerAppForLDM"
+        android:layout_below="@+id/btn_registerApp"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="15dp"
         android:background="@drawable/round_btn"
@@ -136,27 +92,5 @@
         android:text="@string/sdk_version"
         android:textColor="@color/gray"
         android:textSize="15dp"/>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:orientation="horizontal"
-        android:gravity="center"
-        android:layout_below="@+id/text_version">
-
-        <CheckBox
-            android:id="@+id/checkbox_firmware"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-
-        <TextView
-            android:id="@+id/text_firmware_upgrade_in_LDM"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/hint_firmware_upgrade_in_LDM"
-            android:textColor="@color/gray"
-            android:textSize="15dp"/>
-    </LinearLayout>
 
 </com.dji.sdk.sample.internal.view.MainContent>

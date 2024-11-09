@@ -1,35 +1,31 @@
 package com.dji.sdk.sample.internal.view;
 
 import android.content.Context;
-import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
 
 import com.dji.sdk.sample.R;
 import com.dji.sdk.sample.internal.utils.VideoFeedView;
-import com.dji.sdk.sample.internal.view.PresentableView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import dji.sdk.camera.VideoFeeder;
 
-public class FullScreenVideoView extends FrameLayout implements PresentableView {
+public class FullScreenVideoViewZPI extends FrameLayout implements PresentableView {
 
     private VideoFeedView videoFeedView;
     private Button button1;
     private Button button2;
 
-    public FullScreenVideoView(Context context) {
+    public FullScreenVideoViewZPI(Context context) {
         super(context);
         init(context);
     }
 
     private void init(Context context) {
         // Inflate your layout
-        LayoutInflater.from(context).inflate(R.layout.view_full_screen_video, this, true);
+        LayoutInflater.from(context).inflate(R.layout.view_full_screen_video_zpi, this, true);
 
         // Initialize views
         videoFeedView = findViewById(R.id.video_feed_view);

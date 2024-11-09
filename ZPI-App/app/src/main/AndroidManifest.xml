@@ -45,13 +45,13 @@
         <!-- personal key -->
         <meta-data
             android:name="com.dji.sdk.API_KEY"
-            android:value="Please enter your App key here."/>
+            android:value="${DJI_API_KEY}"/>
         <!-- Required for receiving accessory attachment events.
             This is necessary for product when connecting over USB. -->
 
         <activity
             android:name="com.dji.sdk.sample.internal.controller.MainActivity"
-            android:screenOrientation="fullSensor"
+            android:screenOrientation="reverseLandscape"
             android:launchMode="singleTop"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:theme="@style/AppTheme"

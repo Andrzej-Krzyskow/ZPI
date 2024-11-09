@@ -25,6 +25,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.dji.sdk.sample.BuildConfig;
 import com.dji.sdk.sample.R;
 import com.dji.sdk.sample.demo.bluetooth.BluetoothView;
 import com.dji.sdk.sample.internal.controller.DJISampleApplication;
@@ -69,7 +70,7 @@ import dji.sdk.useraccount.UserAccountManager;
  */
 public class MainContent extends RelativeLayout {
 
-    private static final boolean DEBUG = false;
+    private static final boolean DEBUG = BuildConfig.DEBUG_ZPI;
 
     public static final String TAG = MainContent.class.getName();
     private String[] permissionArrays;

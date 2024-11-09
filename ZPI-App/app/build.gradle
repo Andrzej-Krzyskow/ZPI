@@ -3,6 +3,13 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 
+def keystorePropertiesFile = rootProject.file("keystore.properties")
+def keystoreProperties = new Properties()
+
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
+
 repositories {
     mavenLocal()
 }
@@ -22,6 +29,7 @@ android {
             // above, FFmpeg lib might lead to runtime crashes or warnings.
             abiFilters 'armeabi-v7a','arm64-v8a'
         }
+        manifestPlaceholders = [DJI_API_KEY: keystoreProperties['DJI_API_KEY']]
     }
 
     //需要直接使用appbundle的话，需要强制配置shrinkResources为false
@@ -30,11 +38,14 @@ android {
             shrinkResources false
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            buildConfigField "boolean", "DEBUG_ZPI", "false"
+            signingConfig signingConfigs.debug
         }
         debug {
             shrinkResources false
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            buildConfigField "boolean", "DEBUG_ZPI", "true"
         }
     }
 

@@ -69,3 +69,6 @@ Thumbs.db
 
 # Import summary file
 import-summary.txt
+
+# app key file
+/keystore.properties

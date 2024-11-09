@@ -25,6 +25,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.dji.sdk.sample.BuildConfig;
 import com.dji.sdk.sample.R;
 import com.dji.sdk.sample.demo.bluetooth.BluetoothView;
 import com.dji.sdk.sample.internal.controller.DJISampleApplication;
@@ -41,6 +42,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+
 import dji.common.error.DJIError;
 import dji.common.error.DJISDKError;
 import dji.common.realname.AppActivationState;
@@ -68,6 +70,8 @@ import dji.sdk.useraccount.UserAccountManager;
  */
 public class MainContent extends RelativeLayout {
 
+    private static final boolean DEBUG = BuildConfig.DEBUG_ZPI;
+
     public static final String TAG = MainContent.class.getName();
     private String[] permissionArrays;
     private static final int REQUEST_PERMISSION_CODE = 12345;
@@ -83,19 +87,15 @@ public class MainContent extends RelativeLayout {
         }
     };
     private ProgressBar progressBar;
-    private static BluetoothProductConnector connector = null;
+    // private static BluetoothProductConnector connector = null;
     private TextView mTextConnectionStatus;
     private TextView mTextProduct;
     private TextView mTextModelAvailable;
     private Button mBtnRegisterApp;
-    private Button getmBtnRegisterAppForLDM;
     private Button mBtnOpen;
-    private Button mBtnBluetooth;
     private ViewWrapper componentList =
             new ViewWrapper(new DemoListView(getContext()), R.string.activity_component_list);
     private ViewWrapper bluetoothView;
-    private EditText mBridgeModeEditText;
-    private CheckBox mCheckboxFirmware;
     private Handler mHandler;
     private Handler mHandlerUI;
     private HandlerThread mHandlerThread = new HandlerThread("Bluetooth");
@@ -167,11 +167,7 @@ public class MainContent extends RelativeLayout {
         mTextModelAvailable = (TextView) findViewById(R.id.text_model_available);
         mTextProduct = (TextView) findViewById(R.id.text_product_info);
         mBtnRegisterApp = (Button) findViewById(R.id.btn_registerApp);
-        getmBtnRegisterAppForLDM = (Button) findViewById(R.id.btn_registerAppForLDM);
         mBtnOpen = (Button) findViewById(R.id.btn_open);
-        mBridgeModeEditText = (EditText) findViewById(R.id.edittext_bridge_ip);
-        mBtnBluetooth = (Button) findViewById(R.id.btn_bluetooth);
-        mCheckboxFirmware = (CheckBox) findViewById(R.id.checkbox_firmware);
 
         //mBtnBluetooth.setEnabled(false);
 
@@ -180,13 +176,6 @@ public class MainContent extends RelativeLayout {
             @Override
             public void onClick(View v) {
                 isregisterForLDM = false;
-                checkAndRequestPermissions();
-            }
-        });
-        getmBtnRegisterAppForLDM.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                isregisterForLDM = true;
                 checkAndRequestPermissions();
             }
         });
@@ -199,73 +188,10 @@ public class MainContent extends RelativeLayout {
                 DJISampleApplication.getEventBus().post(componentList);
             }
         });
-        mBtnBluetooth.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (GeneralUtils.isFastDoubleClick()) {
-                    return;
-                }
-                if (DJISampleApplication.getBluetoothProductConnector() == null) {
-                    ToastUtils.setResultToToast("pls wait the sdk initiation finished");
-                    return;
-                }
-                bluetoothView =
-                        new ViewWrapper(new BluetoothView(getContext()), R.string.component_listview_bluetooth);
-                DJISampleApplication.getEventBus().post(bluetoothView);
-            }
-        });
-        mBridgeModeEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_SEARCH
-                        || actionId == EditorInfo.IME_ACTION_DONE
-                        || event != null
-                        && event.getAction() == KeyEvent.ACTION_DOWN
-                        && event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
-                    if (event != null && event.isShiftPressed()) {
-                        return false;
-                    } else {
-                        // the user is done typing.
-                        handleBridgeIPTextChange();
-                    }
-                }
-                return false; // pass on to other listeners.
-            }
-        });
-        mBridgeModeEditText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                if (s != null && s.toString().contains("\n")) {
-                    // the user is done typing.
-                    // remove new line characcter
-                    final String currentText = mBridgeModeEditText.getText().toString();
-                    mBridgeModeEditText.setText(currentText.substring(0, currentText.indexOf('\n')));
-                    handleBridgeIPTextChange();
-                }
-            }
-        });
         ((TextView) findViewById(R.id.text_version)).setText(getResources().getString(R.string.sdk_version,
-                DJISDKManager.getInstance().getRegistrationSDKVersion()
+                DJISDKManager.getInstance().getRegistrationSDKVersion() /*
                         + " Debug:"
-                        + GlobalConfig.DEBUG));
-    }
-
-    private void handleBridgeIPTextChange() {
-        // the user is done typing.
-        final String bridgeIP = mBridgeModeEditText.getText().toString();
-        DJISDKManager.getInstance().enableBridgeModeWithBridgeAppIP(bridgeIP);
-        if (!TextUtils.isEmpty(bridgeIP)) {
-            ToastUtils.setResultToToast("BridgeMode ON!\nIP: " + bridgeIP);
-        }
+                        + GlobalConfig.DEBUG*/));
     }
 
     @Override
@@ -281,7 +207,7 @@ public class MainContent extends RelativeLayout {
                     switch (msg.what) {
                         case MSG_UPDATE_BLUETOOTH_CONNECTOR:
                             //connected = DJISampleApplication.getBluetoothConnectStatus();
-                            connector = DJISampleApplication.getBluetoothProductConnector();
+                            /*connector = DJISampleApplication.getBluetoothProductConnector();
 
                             if (connector != null) {
                                 mBtnBluetooth.post(new Runnable() {
@@ -291,11 +217,12 @@ public class MainContent extends RelativeLayout {
                                     }
                                 });
                                 return;
-                            } else if ((System.currentTimeMillis() - currentTime) >= 5000) {
+                            } else */
+                            if ((System.currentTimeMillis() - currentTime) >= 5000) {
                                 DialogUtils.showDialog(getContext(),
                                         "Fetch Connector failed, reboot if you want to connect the Bluetooth");
                                 return;
-                            } else if (connector == null) {
+                            } else /*if (connector == null)*/ {
                                 sendDelayMsg(0, MSG_UPDATE_BLUETOOTH_CONNECTOR);
                             }
                             break;
@@ -392,7 +319,7 @@ public class MainContent extends RelativeLayout {
                 }
             }
         } else {
-            mBtnOpen.setEnabled(false);
+            mBtnOpen.setEnabled(DEBUG);
             mTextProduct.setText(R.string.product_information);
             mTextConnectionStatus.setText(R.string.connection_loose);
             mTextModelAvailable.setText("Firmware version:N/A");
@@ -507,13 +434,13 @@ public class MainContent extends RelativeLayout {
                     ToastUtils.setResultToToast(mContext.getString(R.string.sdk_registration_doing_message));
                     //if we hope the Firmware Upgrade module could access the network under LDM mode, we need call the setModuleNetworkServiceEnabled()
                     //method before the registerAppForLDM() method
-                    if (mCheckboxFirmware.isChecked()) {
+                    /*if (mCheckboxFirmware.isChecked()) {
                         DJISDKManager.getInstance().getLDMManager().setModuleNetworkServiceEnabled(new LDMModule.Builder().moduleType(
                                 LDMModuleType.FIRMWARE_UPGRADE).enabled(true).build());
-                    } else {
-                        DJISDKManager.getInstance().getLDMManager().setModuleNetworkServiceEnabled(new LDMModule.Builder().moduleType(
-                                LDMModuleType.FIRMWARE_UPGRADE).enabled(false).build());
-                    }
+                    } else {*/
+                    DJISDKManager.getInstance().getLDMManager().setModuleNetworkServiceEnabled(new LDMModule.Builder().moduleType(
+                            LDMModuleType.FIRMWARE_UPGRADE).enabled(false).build());
+                    // }
                     if (isregisterForLDM) {
                         DJISDKManager.getInstance().registerAppForLDM(mContext.getApplicationContext(), new DJISDKManager.SDKManagerCallback() {
                             @Override

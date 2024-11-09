@@ -185,7 +185,10 @@ public class MainContent extends RelativeLayout {
                 if (GeneralUtils.isFastDoubleClick()) {
                     return;
                 }
-                DJISampleApplication.getEventBus().post(componentList);
+                // DJISampleApplication.getEventBus().post(componentList);
+                ViewWrapper fullScreenVideoViewWrapper =
+                        new ViewWrapper(new FullScreenVideoViewZPI(getContext()), R.string.component_fullscreen_video_view_zpi);
+                DJISampleApplication.getEventBus().post(fullScreenVideoViewWrapper);
             }
         });
         ((TextView) findViewById(R.id.text_version)).setText(getResources().getString(R.string.sdk_version,

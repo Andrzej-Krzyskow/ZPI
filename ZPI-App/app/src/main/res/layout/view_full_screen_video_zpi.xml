@@ -5,29 +5,30 @@
     android:layout_height="match_parent">
 
     <!-- Full-screen VideoFeedView -->
+
+    <!-- Overlayed Button 1 -->
     <com.dji.sdk.sample.internal.utils.VideoFeedView
         android:id="@+id/video_feed_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <!-- Overlayed Button 1 -->
     <Button
         android:id="@+id/button1"
         android:layout_width="80dp"
         android:layout_height="80dp"
-        android:background="@android:color/transparent"
-        android:text=""
+        android:layout_gravity="bottom|left"
         android:layout_margin="16dp"
-        android:layout_gravity="bottom|left" />
+        android:background="@android:color/transparent"
+        android:text="" />
 
     <!-- Overlayed Button 2 -->
     <Button
         android:id="@+id/button2"
         android:layout_width="80dp"
         android:layout_height="80dp"
-        android:background="@android:color/transparent"
-        android:text=""
+        android:layout_gravity="bottom|right"
         android:layout_margin="16dp"
-        android:layout_gravity="bottom|right" />
+        android:background="@android:color/transparent"
+        android:text="" />
 
 </FrameLayout>

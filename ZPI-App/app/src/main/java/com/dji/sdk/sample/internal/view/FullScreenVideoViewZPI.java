@@ -59,6 +59,7 @@ public class FullScreenVideoViewZPI extends FrameLayout implements PresentableVi
     @Override
     public int getDescription() {
         return R.string.camera_listview_full_screen_video; // Define this string in strings.xml
+
     }
 
     @NonNull

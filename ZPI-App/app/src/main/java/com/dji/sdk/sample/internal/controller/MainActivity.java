@@ -149,8 +149,7 @@ public class MainActivity extends AppCompatActivity {
         pushInAnimator = (ObjectAnimator) AnimatorInflater.loadAnimator(this, R.animator.slide_in_right);
         pushOutAnimator = (ObjectAnimator) AnimatorInflater.loadAnimator(this, R.animator.fade_out);
         popInAnimator = (ObjectAnimator) AnimatorInflater.loadAnimator(this, R.animator.fade_in);
-        ObjectAnimator popOutAnimator =
-                (ObjectAnimator) AnimatorInflater.loadAnimator(this, R.animator.slide_out_right);
+        ObjectAnimator popOutAnimator = (ObjectAnimator) AnimatorInflater.loadAnimator(this, R.animator.slide_out_right);
 
         pushOutAnimator.setStartDelay(100);
 
@@ -197,11 +196,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void refreshTitle() {
+        ActionBar actionBar = getSupportActionBar();
         if (stack.size() > 1) {
-            ViewWrapper wrapper = stack.peek();
-            titleTextView.setText(wrapper.getTitleId());
+            // ViewWrapper wrapper = stack.peek();
+            if (actionBar != null) {
+                actionBar.hide();
+            }
+            // titleTextView.setText(wrapper.getTitleId());
         } else if (stack.size() == 1) {
             BaseProduct product = DJISampleApplication.getProductInstance();
+            if (actionBar != null) {
+                actionBar.show();
+            }
             if (product != null && product.getModel() != null) {
                 titleTextView.setText("" + product.getModel().getDisplayName());
             } else {

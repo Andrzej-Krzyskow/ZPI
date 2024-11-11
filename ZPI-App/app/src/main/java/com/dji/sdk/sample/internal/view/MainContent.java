@@ -10,24 +10,19 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.Message;
-import android.text.Editable;
 import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.dji.sdk.sample.BuildConfig;
 import com.dji.sdk.sample.R;
-import com.dji.sdk.sample.demo.bluetooth.BluetoothView;
 import com.dji.sdk.sample.internal.controller.DJISampleApplication;
 import com.dji.sdk.sample.internal.controller.MainActivity;
 import com.dji.sdk.sample.internal.model.ViewWrapper;
@@ -53,12 +48,10 @@ import dji.keysdk.KeyManager;
 import dji.keysdk.ProductKey;
 import dji.keysdk.callback.KeyListener;
 import dji.log.DJILog;
-import dji.log.GlobalConfig;
 import dji.sdk.base.BaseComponent;
 import dji.sdk.base.BaseProduct;
 import dji.sdk.products.Aircraft;
 import dji.sdk.realname.AppActivationManager;
-import dji.sdk.sdkmanager.BluetoothProductConnector;
 import dji.sdk.sdkmanager.DJISDKInitEvent;
 import dji.sdk.sdkmanager.DJISDKManager;
 import dji.sdk.sdkmanager.LDMModule;
@@ -93,6 +86,7 @@ public class MainContent extends RelativeLayout {
     private TextView mTextModelAvailable;
     private Button mBtnRegisterApp;
     private Button mBtnOpen;
+    private ImageView imageView;
     private ViewWrapper componentList =
             new ViewWrapper(new DemoListView(getContext()), R.string.activity_component_list);
     private ViewWrapper bluetoothView;
@@ -168,6 +162,7 @@ public class MainContent extends RelativeLayout {
         mTextProduct = (TextView) findViewById(R.id.text_product_info);
         mBtnRegisterApp = (Button) findViewById(R.id.btn_registerApp);
         mBtnOpen = (Button) findViewById(R.id.btn_open);
+        imageView = findViewById(R.id.openListImageView);
 
         //mBtnBluetooth.setEnabled(false);
 
@@ -195,6 +190,17 @@ public class MainContent extends RelativeLayout {
                 DJISDKManager.getInstance().getRegistrationSDKVersion() /*
                         + " Debug:"
                         + GlobalConfig.DEBUG*/));
+
+        if (DEBUG) {
+            imageView.setVisibility(VISIBLE);
+            imageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    DJISampleApplication.getEventBus().post(componentList);
+                }
+            });
+        }
+
     }
 
     @Override

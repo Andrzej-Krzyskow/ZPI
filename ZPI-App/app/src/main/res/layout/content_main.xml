@@ -93,4 +93,15 @@
         android:textColor="@color/gray"
         android:textSize="15dp"/>
 
+    <ImageView
+        android:id="@+id/openListImageView"
+        android:layout_width="42dp"
+        android:layout_height="42dp"
+        android:layout_alignParentEnd="true"
+        android:background="@color/black"
+        android:clickable="true"
+        android:focusable="true"
+        android:visibility="gone"
+        app:srcCompat="@drawable/ic_search_white_28dp" />
+
 </com.dji.sdk.sample.internal.view.MainContent>

@@ -6,6 +6,7 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 
 import com.dji.sdk.sample.R;
+import com.dji.sdk.sample.internal.utils.ToastUtils;
 import com.dji.sdk.sample.internal.utils.VideoFeedView;
 
 import androidx.annotation.NonNull;
@@ -33,7 +34,9 @@ public class FullScreenVideoViewZPI extends FrameLayout implements PresentableVi
         button2 = findViewById(R.id.button2);
 
         // Set up the video feed
-        setupVideoFeed();
+        if (VideoFeeder.getInstance() != null) {
+            setupVideoFeed();
+        }
 
         // Set up button click listeners if needed
         setupButtons();
@@ -48,10 +51,12 @@ public class FullScreenVideoViewZPI extends FrameLayout implements PresentableVi
     private void setupButtons() {
         // Handle button clicks
         button1.setOnClickListener(v -> {
+            ToastUtils.setResultToToast("button 1 clicked");
             // TODO: Implement what happens when button 1 is clicked
         });
 
         button2.setOnClickListener(v -> {
+            ToastUtils.setResultToToast("button 2 clicked");
             // TODO: Implement what happens when button 2 is clicked
         });
     }

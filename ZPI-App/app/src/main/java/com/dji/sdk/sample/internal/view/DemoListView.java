@@ -96,7 +96,7 @@ public class DemoListView extends FrameLayout {
         builder.addGroup(R.string.component_listview_camera,
                 false,
                 // ... other GroupItems ...
-                new GroupItem(R.string.camera_listview_full_screen_video, FullScreenVideoViewZPI.class)
+                new GroupItem(R.string.camera_listview_full_screen_video_zpi, FullScreenVideoViewZPI.class)
                 // ... other GroupItems ...
         );
         builder.addGroup(R.string.component_listview_sdk_4_16,

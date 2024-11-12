@@ -32,7 +32,7 @@ public class FullScreenActivity extends AppCompatActivity {
 
         // Initialize views
         videoFeedView = findViewById(R.id.video_feed_view);
-        button1 = findViewById(R.id.button1);
+        button1 = findViewById(R.id.turnOnLed);
         button2 = findViewById(R.id.button2);
 
         // Set up video feed

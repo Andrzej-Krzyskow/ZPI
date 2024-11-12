@@ -1,8 +1,11 @@
 <resources>
 
     <!-- CUSTOM Strings -->
-    <string name="zpi_app_name">Terradrönare</string>
-
+    <string name="app_name_zpi">Terradrönare</string>
+    <string name="component_fullscreen_video_view_zpi">Fullscreen Video View ZPI</string>
+    <string name="camera_listview_full_screen_video_zpi">Full Screen Video</string>
+    <string name="turn_on_front_led_zpi">Shoot</string>
+    <string name="sdk_registration_doing_message_zpi">Registering, wait...</string>
 
     <!-- DJI OOTB String -->
     <string name="sample_app_name">DJI SDK Sample</string>
@@ -18,7 +21,6 @@
     <string name="sdk_registration_message">SDK Registration Failed. Please check the bundle ID and your network
         connectivity. </string>
     <string name="sdk_registration_success_message">SDK Registered Successfully.</string>
-    <string name="sdk_registration_doing_message">Registering, wait...</string>
 
     <string name="activity_component_list">Component List</string>
     <string name="start_payload">Start Payload</string>
@@ -56,7 +58,6 @@
     <string name="component_listview_waypoint_mission_operator">Waypoint Mission Operator</string>
     <string name="component_listview_follow_me_mission_operator">Follow Me Mission Operator</string>
     <string name="component_listview_keyed_interface">Keyed Interface Sample</string>
-    <string name="component_fullscreen_video_view_zpi">Fullscreen Video View ZPI</string>
 
     <string name="component_listview_sdk_4_1">4.1 New Interfaces</string>
     <string name="component_listview_app_activation">App Activation and ADSB View</string>
@@ -111,7 +112,6 @@
     <string name="camera_listview_download_media">Download Media</string>
     <string name="camera_listview_media_playback">Media Manager</string>
     <string name="moveToPosition">Skip Time</string>
-    <string name="camera_listview_full_screen_video">Full Screen Video</string>
 
     <!-- Gimbal list -->
     <string name="gimbal_subtitle_rotate_gimbal">Rotate Gimbal</string>

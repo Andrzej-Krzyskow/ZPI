@@ -19,7 +19,9 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.dji.sdk.sample.BuildConfig;
 import com.dji.sdk.sample.R;
@@ -35,11 +37,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-
 import dji.common.error.DJIError;
 import dji.common.error.DJISDKError;
+import dji.common.flightcontroller.LEDsSettings;
 import dji.common.realname.AppActivationState;
 import dji.common.useraccount.UserAccountState;
 import dji.common.util.CommonCallbacks;
@@ -50,6 +50,7 @@ import dji.keysdk.callback.KeyListener;
 import dji.log.DJILog;
 import dji.sdk.base.BaseComponent;
 import dji.sdk.base.BaseProduct;
+import dji.sdk.flightcontroller.FlightController;
 import dji.sdk.products.Aircraft;
 import dji.sdk.realname.AppActivationManager;
 import dji.sdk.sdkmanager.DJISDKInitEvent;
@@ -105,6 +106,7 @@ public class MainContent extends RelativeLayout {
     private AppActivationState.AppActivationStateListener appActivationStateListener;
     private boolean isregisterForLDM = false;
     private Context mContext;
+    private FlightController flightController;
 
     public MainContent(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -201,6 +203,7 @@ public class MainContent extends RelativeLayout {
             });
         }
 
+        mBtnRegisterApp.performClick();
     }
 
     @Override
@@ -208,6 +211,7 @@ public class MainContent extends RelativeLayout {
         Log.d(TAG, "Comes into the onAttachedToWindow");
         if (!isInEditMode()) {
             refreshSDKRelativeUI();
+            turnOffLed();
             mHandlerThread.start();
             final long currentTime = System.currentTimeMillis();
             mHandler = new Handler(mHandlerThread.getLooper()) {
@@ -244,6 +248,22 @@ public class MainContent extends RelativeLayout {
             mHandlerUI = new Handler(Looper.getMainLooper());
         }
         super.onAttachedToWindow();
+    }
+
+
+    private void turnOffLed() {
+        if (DJISDKManager.getInstance() != null && flightController == null) {
+            BaseProduct product = DJISDKManager.getInstance().getProduct();
+            if (product != null) {
+                if (product instanceof Aircraft) {
+                    flightController = ((Aircraft) product).getFlightController();
+                }
+            }
+        }
+        LEDsSettings ledsSettings = new LEDsSettings.Builder().frontLEDsOn(false).build();
+        if (flightController != null) {
+            flightController.setLEDsEnabledSettings(ledsSettings, null);
+        }
     }
 
     private void sendDelayMsg(int msg, long delayMillis) {
@@ -440,7 +460,7 @@ public class MainContent extends RelativeLayout {
             AsyncTask.execute(new Runnable() {
                 @Override
                 public void run() {
-                    ToastUtils.setResultToToast(mContext.getString(R.string.sdk_registration_doing_message));
+                    ToastUtils.setResultToToast(mContext.getString(R.string.sdk_registration_doing_message_zpi));
                     //if we hope the Firmware Upgrade module could access the network under LDM mode, we need call the setModuleNetworkServiceEnabled()
                     //method before the registerAppForLDM() method
                     /*if (mCheckboxFirmware.isChecked()) {

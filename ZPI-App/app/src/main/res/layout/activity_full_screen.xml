@@ -12,7 +12,7 @@
 
     <!-- Overlayed Button 1 -->
     <Button
-        android:id="@+id/button1"
+        android:id="@+id/turnOnLed"
         android:layout_width="80dp"
         android:layout_height="80dp"
         android:text=""

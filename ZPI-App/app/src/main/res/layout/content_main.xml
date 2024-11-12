@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_gravity="center"
+    android:layout_gravity="fill_vertical"
+    android:layout_marginTop="?android:attr/actionBarSize"
     android:clickable="true"
     android:orientation="vertical"
     tools:context=".internal.controller.MainActivity">
@@ -23,6 +24,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
+        android:layout_marginTop="5dp"
         android:gravity="center"
         android:text="Status: No Product Connected"
         android:textColor="@android:color/black"

@@ -32,7 +32,6 @@ import com.squareup.otto.Subscribe;
 
 import java.util.Stack;
 
-import dji.sdk.base.BaseProduct;
 import dji.sdk.sdkmanager.DJISDKManager;
 
 public class MainActivity extends AppCompatActivity {
@@ -196,7 +195,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void refreshTitle() {
-        ActionBar actionBar = getSupportActionBar();
+        titleTextView.setText(R.string.app_name_zpi);
+/*        ActionBar actionBar = getSupportActionBar();
         if (stack.size() > 1) {
             // ViewWrapper wrapper = stack.peek();
             if (actionBar != null) {
@@ -208,12 +208,8 @@ public class MainActivity extends AppCompatActivity {
             if (actionBar != null) {
                 actionBar.show();
             }
-            if (product != null && product.getModel() != null) {
-                titleTextView.setText("" + product.getModel().getDisplayName());
-            } else {
-                titleTextView.setText(R.string.zpi_app_name);
-            }
-        }
+            titleTextView.setText(R.string.zpi_app_name);
+        }*/
     }
 
     private void popView() {
@@ -264,12 +260,12 @@ public class MainActivity extends AppCompatActivity {
     @Subscribe
     public void onReceiveStartFullScreenRequest(RequestStartFullScreenEvent event) {
         getSupportActionBar().hide();
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
     }
 
     @Subscribe
     public void onReceiveEndFullScreenRequest(RequestEndFullScreenEvent event) {
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
         getSupportActionBar().show();
     }
 

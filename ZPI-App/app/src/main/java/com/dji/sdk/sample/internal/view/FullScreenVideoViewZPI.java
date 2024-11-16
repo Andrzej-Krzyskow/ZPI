@@ -1,6 +1,8 @@
 package com.dji.sdk.sample.internal.view;
 
 import android.content.Context;
+import android.os.Handler;
+import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -12,6 +14,8 @@ import com.dji.sdk.sample.internal.controller.DJISampleApplication;
 import com.dji.sdk.sample.internal.controller.MainActivity;
 import com.dji.sdk.sample.internal.utils.ToastUtils;
 import com.dji.sdk.sample.internal.utils.VideoFeedView;
+
+import java.util.Random;
 
 import dji.common.flightcontroller.LEDsSettings;
 import dji.sdk.base.BaseProduct;
@@ -26,9 +30,17 @@ public class FullScreenVideoViewZPI extends LinearLayout implements PresentableV
     private Button btnTurnOnLed;
     private Button button2;
     private FlightController flightController;
+    private OverlayViewZPI overlayView;
+    private Handler handler;
+    private Runnable updateRunnable;
 
     public FullScreenVideoViewZPI(Context context) {
         super(context);
+        init(context);
+    }
+
+    public FullScreenVideoViewZPI(Context context, AttributeSet attrs) {
+        super(context, attrs);
         init(context);
     }
 
@@ -42,6 +54,7 @@ public class FullScreenVideoViewZPI extends LinearLayout implements PresentableV
     public void onDetachedFromWindow() {
         super.onDetachedFromWindow();
         DJISampleApplication.getEventBus().post(new MainActivity.RequestEndFullScreenEvent());
+        handler.removeCallbacks(updateRunnable); // Stop the handler when view is detached
     }
 
     private void init(Context context) {
@@ -50,17 +63,70 @@ public class FullScreenVideoViewZPI extends LinearLayout implements PresentableV
         videoFeedView = findViewById(R.id.video_feed_view);
         btnTurnOnLed = findViewById(R.id.turn_on_led);
         button2 = findViewById(R.id.button2);
+        overlayView = findViewById(R.id.overlay_view);
 
         if (VideoFeeder.getInstance() != null) {
             setupVideoFeed();
         }
 
         setupButtons();
+
+        handler = new Handler();
+        updateRunnable = new Runnable() {
+            @Override
+            public void run() {
+                updateOverlayCircles();
+                handler.postDelayed(this, 50); // Update every 50 milliseconds (~20 FPS)
+            }
+        };
+        handler.post(updateRunnable);
     }
 
     private void setupVideoFeed() {
         VideoFeeder.VideoFeed videoFeed = VideoFeeder.getInstance().getPrimaryVideoFeed();
         videoFeedView.registerLiveVideo(videoFeed, true);
+    }
+
+    private void updateOverlayCircles() {
+        float errorDistance = getErrorDistance();
+
+        // Calculate the radii based on the error distance and the CEP multipliers
+        float radius50 = errorDistance * 0.6745f;
+        float radius93 = errorDistance * 2.0f;
+        float radius99 = errorDistance * 2.576f;
+
+        // Scale the radii to fit the view dimensions
+        float scaleFactor = calculateScaleFactor();
+        radius50 *= scaleFactor;
+        radius93 *= scaleFactor;
+        radius99 *= scaleFactor;
+
+        overlayView.updateRadii(radius50, radius93, radius99);
+    }
+
+    private float calculateScaleFactor() {
+        // Calculate a scale factor based on the view size
+        // For simplicity, let's assume the maximum errorDistance corresponds to half the smaller dimension
+        float maxErrorDistance = 50f; // This should match the amplitude used in getErrorDistance()
+        float minViewDimension = Math.min(overlayView.getWidth(), overlayView.getHeight());
+        return (minViewDimension / 2f) / maxErrorDistance;
+    }
+
+    private float getErrorDistance() {
+        // Get the current time in milliseconds
+        long currentTime = System.currentTimeMillis();
+
+        // Convert time to seconds
+        float timeInSeconds = currentTime / 1000f;
+
+        // Calculate the sine value
+        float frequency = 0.1f; // Frequency in Hz (cycles per second)
+        float amplitude = 50f;  // Maximum error distance
+
+        // Calculate the error distance using the sine function
+        float errorDistance = amplitude * (float) Math.abs(Math.sin(2 * Math.PI * frequency * timeInSeconds));
+
+        return errorDistance;
     }
 
     private void turnOnLed() {
@@ -115,13 +181,6 @@ public class FullScreenVideoViewZPI extends LinearLayout implements PresentableV
             // TODO: Implement what happens when button 2 is clicked
         });
     }
-
-    public float getErrorDistance() {
-        float someFloatValue = 1;
-        //TODO: Replace this with your actual function that provides the error distance
-        return someFloatValue;
-    }
-
 
     @Override
     public int getDescription() {

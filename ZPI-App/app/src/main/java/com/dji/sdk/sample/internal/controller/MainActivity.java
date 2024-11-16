@@ -259,8 +259,8 @@ public class MainActivity extends AppCompatActivity {
     //region Event-Bus
     @Subscribe
     public void onReceiveStartFullScreenRequest(RequestStartFullScreenEvent event) {
-        getSupportActionBar().hide();
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
+        getSupportActionBar().hide();
     }
 
     @Subscribe
@@ -310,4 +310,12 @@ public class MainActivity extends AppCompatActivity {
     public static class ConnectivityChangeEvent {
     }
     //endregion
+
+    public static class RequestPortrait {
+    }
+
+    @Subscribe
+    public void setPortrait(RequestPortrait event) {
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+    }
 }

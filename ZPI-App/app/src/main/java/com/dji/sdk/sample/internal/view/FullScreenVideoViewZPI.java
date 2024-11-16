@@ -116,6 +116,13 @@ public class FullScreenVideoViewZPI extends LinearLayout implements PresentableV
         });
     }
 
+    public float getErrorDistance() {
+        float someFloatValue = 1;
+        //TODO: Replace this with your actual function that provides the error distance
+        return someFloatValue;
+    }
+
+
     @Override
     public int getDescription() {
         return R.string.component_fullscreen_video_view_zpi;

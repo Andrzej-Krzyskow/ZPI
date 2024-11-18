@@ -49,14 +49,4 @@
         app:layout_constraintBottom_toTopOf="@+id/btn_turn_on_led"
         app:layout_constraintStart_toStartOf="@+id/btn_turn_on_led" />
 
-    <ImageView
-        android:id="@+id/show_image"
-        android:layout_width="177dp"
-        android:layout_height="139dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="260dp"
-        app:layout_constraintBottom_toBottomOf="@+id/btn_turn_on_led"
-        app:layout_constraintStart_toStartOf="@+id/btn_turn_on_led" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>

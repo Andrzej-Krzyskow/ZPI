@@ -112,21 +112,30 @@ public class FullScreenVideoViewZPI extends LinearLayout implements PresentableV
         return (minViewDimension / 2f) / maxErrorDistance;
     }
 
+
+    private Random random = new Random();
+    private float currentErrorDistance = 1f;
+    private float targetErrorDistance = 1f;
+    private long lastUpdateTime = 0;
+    private static final long UPDATE_INTERVAL = 50; // Update every 500 milliseconds
+    private float interpolationSpeed = 0.05f; // Adjust for smoother transitions
+
+
     private float getErrorDistance() {
-        // Get the current time in milliseconds
         long currentTime = System.currentTimeMillis();
 
-        // Convert time to seconds
-        float timeInSeconds = currentTime / 1000f;
+        // Check if it's time to update the target error distance
+        if (currentTime - lastUpdateTime >= UPDATE_INTERVAL) {
+            lastUpdateTime = currentTime;
 
-        // Calculate the sine value
-        float frequency = 0.1f; // Frequency in Hz (cycles per second)
-        float amplitude = 50f;  // Maximum error distance
+            // Generate a new random target error distance between 1 and 50
+            targetErrorDistance = 1 + random.nextFloat() * 20; // Random value between 1 and 50
+        }
 
-        // Calculate the error distance using the sine function
-        float errorDistance = amplitude * (float) Math.abs(Math.sin(2 * Math.PI * frequency * timeInSeconds));
+        // Interpolate towards the target error distance
+        currentErrorDistance += (targetErrorDistance - currentErrorDistance) * interpolationSpeed;
 
-        return errorDistance;
+        return currentErrorDistance;
     }
 
     private void turnOnLed() {

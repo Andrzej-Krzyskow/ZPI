@@ -198,6 +198,7 @@ public class MainContent extends RelativeLayout {
             imageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    DJISampleApplication.getEventBus().post(new MainActivity.RequestPortrait());
                     DJISampleApplication.getEventBus().post(componentList);
                 }
             });

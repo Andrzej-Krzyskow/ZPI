@@ -252,4 +252,10 @@ public class DemoListView extends FrameLayout {
             }
         }
     }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        DJISampleApplication.getEventBus().post(new MainActivity.RequestEndFullScreenEvent());
+    }
 }

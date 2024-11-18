@@ -52,7 +52,7 @@ public class FullScreenVideoViewZPI extends LinearLayout implements PresentableV
     private ImageView mDisplayImageView;
     private List<MediaFile> mediaList = new ArrayList<MediaFile>();
     private SettingsDefinitions.StorageLocation storageLocation = SettingsDefinitions.StorageLocation.INTERNAL_STORAGE;
-
+    private boolean areCirclesVisible = false; // Circles are hidden by default
 
     public FullScreenVideoViewZPI(Context context) {
         super(context);
@@ -123,21 +123,24 @@ public class FullScreenVideoViewZPI extends LinearLayout implements PresentableV
     }
 
     private void updateOverlayCircles() {
-        float errorDistance = getErrorDistance();
+        if (areCirclesVisible) {
+            float errorDistance = getErrorDistance();
 
-        // Calculate the radii based on the error distance and the CEP multipliers
-        float radius50 = errorDistance * 0.6745f;
-        float radius93 = errorDistance * 2.0f;
-        float radius99 = errorDistance * 2.576f;
+            // Calculate the radii based on the error distance and the CEP multipliers
+            float radius50 = errorDistance * 0.6745f;
+            float radius93 = errorDistance * 2.0f;
+            float radius99 = errorDistance * 2.576f;
 
-        // Scale the radii to fit the view dimensions
-        float scaleFactor = calculateScaleFactor();
-        radius50 *= scaleFactor;
-        radius93 *= scaleFactor;
-        radius99 *= scaleFactor;
+            // Scale the radii to fit the view dimensions
+            float scaleFactor = calculateScaleFactor();
+            radius50 *= scaleFactor;
+            radius93 *= scaleFactor;
+            radius99 *= scaleFactor;
 
-        overlayView.updateRadii(radius50, radius93, radius99);
+            overlayView.updateRadii(radius50, radius93, radius99);
+        }
     }
+
 
     private float calculateScaleFactor() {
         // Calculate a scale factor based on the view size
@@ -213,14 +216,19 @@ public class FullScreenVideoViewZPI extends LinearLayout implements PresentableV
             shoot();
         });
 
-        btn_aim.setOnClickListener(v -> {
-            ToastUtils.setResultToToast("Aim clicked");
-            aim();
-        });
+        btn_aim.setOnClickListener(v -> aim());
     }
 
     private void aim() {
-        captureFrame();
+        areCirclesVisible = !areCirclesVisible; // Toggle the visibility flag
+        overlayView.setShowCircles(areCirclesVisible); // Update the overlay view
+
+        // Optionally, show a toast message
+        if (areCirclesVisible) {
+            ToastUtils.setResultToToast("CEP Circles turned ON");
+        } else {
+            ToastUtils.setResultToToast("CEP Circles turned OFF");
+        }
     }
 
     private void captureFrame() {

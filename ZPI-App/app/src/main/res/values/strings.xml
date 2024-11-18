@@ -5,7 +5,8 @@
     <string name="component_fullscreen_video_view_zpi">Fullscreen Video View ZPI</string>
     <string name="camera_listview_full_screen_video_zpi">Full Screen Video</string>
     <string name="turn_on_front_led_zpi">Shoot</string>
-    <string name="sdk_registration_doing_message_zpi">Registering, wait...</string>
+    <string name="sdk_registration_doing_message_zpi">Registering, wait…</string>
+    <string name="aim_zpi">Aim</string>
 
     <!-- DJI OOTB String -->
     <string name="sample_app_name">DJI SDK Sample</string>

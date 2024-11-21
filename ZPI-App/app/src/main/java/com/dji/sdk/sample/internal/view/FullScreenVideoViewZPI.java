@@ -106,6 +106,7 @@ public class FullScreenVideoViewZPI extends LinearLayout implements PresentableV
 
     private void shoot() {
         turnOnLed();
+        ToastUtils.setResultToToast("Fired!");
     }
 
     private void updateOverlayCircles() {
@@ -183,12 +184,10 @@ public class FullScreenVideoViewZPI extends LinearLayout implements PresentableV
 
     private void setupButtons() {
         btnTurnOnLed.setOnClickListener(v -> {
-            ToastUtils.setResultToToast("Shoot clicked");
             shoot();
         });
 
         btn_aim.setOnClickListener(v -> {
-            ToastUtils.setResultToToast("Aim clicked");
             aim();
         });
 

@@ -58,7 +58,6 @@ public class FullScreenVideoViewZPI extends LinearLayout implements PresentableV
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
         DJISampleApplication.getEventBus().post(new MainActivity.RequestStartFullScreenEvent());
-        setupObstacleDistanceDetection();
     }
 
     @Override
@@ -81,8 +80,9 @@ public class FullScreenVideoViewZPI extends LinearLayout implements PresentableV
         }
 
         setupButtons();
-        startDistanceCheck();
+        setupObstacleDistanceDetection();
         setupCircleHandler();
+        startDistanceCheck();
     }
 
     private void setupCircleHandler() {

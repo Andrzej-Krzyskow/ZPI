@@ -53,7 +53,7 @@ public class OverlayViewZPI extends View {
         }
     }
 
-    public void setShowCircles(boolean showCircles) {
+    public void showCrosshair(boolean showCircles) {
         this.showCircles = showCircles;
         invalidate(); // Redraw the view to show or hide circles
     }

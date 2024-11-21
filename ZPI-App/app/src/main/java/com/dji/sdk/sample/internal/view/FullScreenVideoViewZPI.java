@@ -34,18 +34,16 @@ public class FullScreenVideoViewZPI extends LinearLayout implements PresentableV
 
     public static final int INVALID_READING_LIMIT_TIME = 2000;
     public static final int DISTANCE_UPDATE_DELAY_TIME = 170;
-    private Aircraft aircraft;
     private VideoFeedView videoFeedView;
     private VideoFeeder.VideoDataListener videoDataListener;
     private Button btnTurnOnLed;
     private Button btn_aim;
-    private Button mBtnOpen = (Button) findViewById(R.id.btn_open);
     private FlightController flightController;
     private Handler circlesHandler;
     private OverlayViewZPI overlayView;
     private Runnable updateRunnable;
-    private boolean areCirclesVisible = false;
-    private Handler distanceHandler = new Handler();
+    private boolean isAimModeOn = false;
+    private Handler distanceHandler;
     private float noseObstacleDistance = 100;
     private long lastValidReadingTime = 0;
     private int INVALID_DISTANCE = 100;
@@ -100,11 +98,9 @@ public class FullScreenVideoViewZPI extends LinearLayout implements PresentableV
     }
 
     private void setupVideoFeedAndCamera() {
-        aircraft = (Aircraft) DJISDKManager.getInstance().getProduct();
         VideoFeeder.VideoFeed videoFeed = VideoFeeder.getInstance().getPrimaryVideoFeed();
         videoDataListener = videoFeedView.registerLiveVideo(VideoFeeder.getInstance().getPrimaryVideoFeed(), true);
         videoFeed.addVideoDataListener(videoDataListener);
-
         videoFeedView.registerLiveVideo(videoFeed, true);
     }
 
@@ -113,7 +109,7 @@ public class FullScreenVideoViewZPI extends LinearLayout implements PresentableV
     }
 
     private void updateOverlayCircles() {
-        if (areCirclesVisible) {
+        if (isAimModeOn) {
             float errorDistance = noseObstacleDistance * 10;
 
             // Calculate the radii based on the error distance and the CEP multipliers
@@ -199,13 +195,16 @@ public class FullScreenVideoViewZPI extends LinearLayout implements PresentableV
     }
 
     private void aim() {
-        areCirclesVisible = !areCirclesVisible;
-        overlayView.setShowCircles(areCirclesVisible);
+        isAimModeOn = !isAimModeOn;
+        overlayView.showCrosshair(isAimModeOn);
+        displayAimModeToastMsg();
+    }
 
-        if (areCirclesVisible) {
-            ToastUtils.setResultToToast("CEP Circles turned ON");
+    private void displayAimModeToastMsg() {
+        if (isAimModeOn) {
+            ToastUtils.setResultToToast("Aim Mode turned ON");
         } else {
-            ToastUtils.setResultToToast("CEP Circles turned OFF");
+            ToastUtils.setResultToToast("Aim Mode turned OFF");
         }
     }
 
@@ -218,10 +217,6 @@ public class FullScreenVideoViewZPI extends LinearLayout implements PresentableV
     @Override
     public String getHint() {
         return this.getClass().getSimpleName() + ".java";
-    }
-
-    public float getNoseObstacleDistance() {
-        return noseObstacleDistance;
     }
 
     private void setupObstacleDistanceDetection() {
@@ -255,6 +250,7 @@ public class FullScreenVideoViewZPI extends LinearLayout implements PresentableV
     }
 
     private void startDistanceCheck() {
+        distanceHandler = new Handler();
         distanceHandler.post(distanceChecker);
     }
 

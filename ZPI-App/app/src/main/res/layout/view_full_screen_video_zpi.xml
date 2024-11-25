@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/video_feeder_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -17,7 +16,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- OverlayView -->
     <com.dji.sdk.sample.internal.view.OverlayViewZPI
         android:id="@+id/overlay_view"
         android:layout_width="0dp"
@@ -28,25 +26,21 @@
         app:layout_constraintStart_toStartOf="@+id/video_feed_view"
         app:layout_constraintTop_toTopOf="@+id/video_feed_view" />
 
-    <!-- Button 1 -->
     <Button
-        android:id="@+id/btn_turn_on_led"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:id="@+id/btn_fire"
+        style="@style/btn_zpi"
         android:layout_margin="16dp"
-        android:elevation="10dp"
-        android:text="@string/turn_on_front_led_zpi"
+        android:text="@string/shoot_zpi"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        android:enabled="false"/>
 
     <Button
         android:id="@+id/btn_aim"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:elevation="10dp"
+        style="@style/btn_zpi"
+        android:layout_marginBottom="10dp"
         android:text="@string/aim_zpi"
-        app:layout_constraintBottom_toTopOf="@+id/btn_turn_on_led"
-        app:layout_constraintStart_toStartOf="@+id/btn_turn_on_led" />
+        app:layout_constraintBottom_toTopOf="@+id/btn_fire"
+        app:layout_constraintStart_toStartOf="@+id/btn_fire" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

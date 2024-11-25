@@ -37,7 +37,7 @@ public class FullScreenVideoViewZPI extends LinearLayout implements PresentableV
     public static final int SHOT_DELAY_TIME = 4000;
     private VideoFeedView videoFeedView;
     private VideoFeeder.VideoDataListener videoDataListener;
-    private Button btnTurnOnLed;
+    private Button btn_fire;
     private Button btn_aim;
     private FlightController flightController;
     private Handler circlesHandler;
@@ -72,7 +72,7 @@ public class FullScreenVideoViewZPI extends LinearLayout implements PresentableV
     private void init(Context context) {
         LayoutInflater.from(context).inflate(R.layout.view_full_screen_video_zpi, this, true);
         videoFeedView = findViewById(R.id.video_feed_view);
-        btnTurnOnLed = findViewById(R.id.btn_turn_on_led);
+        btn_fire = findViewById(R.id.btn_fire);
         btn_aim = findViewById(R.id.btn_aim);
         overlayView = findViewById(R.id.overlay_view);
 
@@ -184,7 +184,7 @@ public class FullScreenVideoViewZPI extends LinearLayout implements PresentableV
     }
 
     private void setupButtons() {
-        btnTurnOnLed.setOnClickListener(v -> {
+        btn_fire.setOnClickListener(v -> {
             shoot();
         });
 
@@ -192,10 +192,12 @@ public class FullScreenVideoViewZPI extends LinearLayout implements PresentableV
             aim();
         });
 
+        btn_fire.setEnabled(false);
     }
 
     private void aim() {
         isAimModeOn = !isAimModeOn;
+        btn_fire.setEnabled(isAimModeOn);
         overlayView.showCrosshair(isAimModeOn);
         displayAimModeToastMsg();
     }
@@ -236,13 +238,16 @@ public class FullScreenVideoViewZPI extends LinearLayout implements PresentableV
                             || visionDetectionState.getPosition() != VisionSensorPosition.NOSE) {
                         return;
                     }
-
+                    float minReading = INVALID_DISTANCE;
                     for (int i = 1; i <= 2; i++) {
                         float distance = visionDetectionSectorArray[i].getObstacleDistanceInMeters();
-                        if (distance >= 0 && distance != 100) { // ignore invalid readings of 100 meters
-                            recentReadings.add(distance);
+                        if (distance >= 0 && distance != 100 && distance < minReading) { // ignore invalid readings of 100 meters
+                            minReading = distance;
                             lastValidReadingTime = System.currentTimeMillis(); // update the last valid reading time
                         }
+                    }
+                    if (minReading < INVALID_DISTANCE) {
+                        recentReadings.add(minReading);
                     }
                 });
             }
@@ -260,7 +265,6 @@ public class FullScreenVideoViewZPI extends LinearLayout implements PresentableV
             long currentTime = System.currentTimeMillis();
 
             if (!recentReadings.isEmpty()) {
-                // calculate the average of available valid readings
                 float sum = 0;
                 for (Float reading : recentReadings) {
                     sum += reading;

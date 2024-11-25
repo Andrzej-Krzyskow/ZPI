@@ -1,4 +1,15 @@
 <resources>
+    <!-- CUSTOM ZPI STYLES -->
+    <style name="btn_zpi">
+        <item name="android:layout_width">@dimen/button_size_zpi</item>
+        <item name="android:layout_height">@dimen/button_size_zpi</item>
+        <item name="android:alpha">0.8</item>
+        <item name="android:background">@drawable/button_background_zpi</item>
+        <item name="android:elevation">10dp</item>
+        <item name="android:textColor">@drawable/button_text_color_zpi</item>
+        <item name="android:textSize">@dimen/button_text_size_zpi</item>
+        <item name="android:textStyle">bold</item>
+    </style>
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">

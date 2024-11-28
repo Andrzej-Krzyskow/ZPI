@@ -145,6 +145,11 @@ public class MainContent extends RelativeLayout {
         }
     }
 
+    public void enableButton(){
+        mBtnRegisterApp.setEnabled(true);
+        mBtnOpen.setEnabled(true);
+    }
+
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
@@ -184,8 +189,10 @@ public class MainContent extends RelativeLayout {
                 }
                 // DJISampleApplication.getEventBus().post(componentList);
                 ViewWrapper fullScreenVideoViewWrapper =
-                        new ViewWrapper(new FullScreenVideoViewZPI(getContext()), R.string.component_fullscreen_video_view_zpi);
+                        new ViewWrapper(new FullScreenVideoViewZPI(getContext(),MainContent.this), R.string.component_fullscreen_video_view_zpi);
                 DJISampleApplication.getEventBus().post(fullScreenVideoViewWrapper);
+                mBtnRegisterApp.setEnabled(false);
+                mBtnOpen.setEnabled(false);
             }
         });
         ((TextView) findViewById(R.id.text_version)).setText(getResources().getString(R.string.sdk_version,
@@ -248,6 +255,8 @@ public class MainContent extends RelativeLayout {
             };
             mHandlerUI = new Handler(Looper.getMainLooper());
         }
+
+
         super.onAttachedToWindow();
     }
 
@@ -323,6 +332,7 @@ public class MainContent extends RelativeLayout {
 
     private void refreshSDKRelativeUI() {
         mProduct = DJISampleApplication.getProductInstance();
+        mBtnRegisterApp.setEnabled(true);
         Log.d(TAG, "mProduct: " + (mProduct == null ? "null" : "unnull"));
         if (null != mProduct) {
             if (mProduct.isConnected()) {
@@ -510,9 +520,9 @@ public class MainContent extends RelativeLayout {
                                 if (newComponent != null) {
                                     newComponent.setComponentListener(mDJIComponentListener);
 
-                                    if (componentKey == BaseProduct.ComponentKey.FLIGHT_CONTROLLER) {
+                                    /*if (componentKey == BaseProduct.ComponentKey.FLIGHT_CONTROLLER) {
                                         showDBVersion();
-                                    }
+                                    }*/
                                 }
                                 Log.d(TAG,
                                         String.format("onComponentChange key:%s, oldComponent:%s, newComponent:%s",
@@ -583,9 +593,9 @@ public class MainContent extends RelativeLayout {
                                 if (newComponent != null) {
                                     newComponent.setComponentListener(mDJIComponentListener);
 
-                                    if (componentKey == BaseProduct.ComponentKey.FLIGHT_CONTROLLER) {
+                                   /* if (componentKey == BaseProduct.ComponentKey.FLIGHT_CONTROLLER) {
                                         showDBVersion();
-                                    }
+                                    }*/
                                 }
                                 Log.d(TAG,
                                         String.format("onComponentChange key:%s, oldComponent:%s, newComponent:%s",

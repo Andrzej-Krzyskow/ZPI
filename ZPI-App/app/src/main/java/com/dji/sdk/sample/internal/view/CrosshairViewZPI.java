@@ -7,7 +7,7 @@ import android.graphics.Path;
 import android.util.AttributeSet;
 import android.view.View;
 
-public class OverlayViewZPI extends View {
+public class CrosshairViewZPI extends View {
     private float radius50;
     private float radius93;
     private float radius99;
@@ -17,12 +17,12 @@ public class OverlayViewZPI extends View {
     private boolean showCircles = false; // Circles are hidden by default
 
     private int OPACITY = 90;
-    public OverlayViewZPI(Context context) {
+    public CrosshairViewZPI(Context context) {
         super(context);
         init();
     }
 
-    public OverlayViewZPI(Context context, AttributeSet attrs) {
+    public CrosshairViewZPI(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }

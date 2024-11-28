@@ -3,8 +3,10 @@ package com.dji.sdk.sample.internal.view;
 import android.content.Context;
 import android.os.Handler;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
@@ -17,7 +19,6 @@ import com.dji.sdk.sample.internal.utils.VideoFeedView;
 
 import java.util.LinkedList;
 import java.util.Queue;
-
 import java.util.Random;
 
 import dji.common.flightcontroller.LEDsSettings;
@@ -35,39 +36,53 @@ public class FullScreenVideoViewZPI extends LinearLayout implements PresentableV
     public static final int INVALID_READING_LIMIT_TIME = 2000;
     public static final int DISTANCE_UPDATE_DELAY_TIME = 170;
     public static final int SHOT_DELAY_TIME = 4000;
+    private static final int INVALID_DISTANCE = 100;
+    public static final int THRESHOLD_DISTANCE = 5;
+    MainContent mainContent;
     private VideoFeedView videoFeedView;
     private VideoFeeder.VideoDataListener videoDataListener;
-    private Button btn_fire;
-    private Button btn_aim;
     private FlightController flightController;
     private Handler circlesHandler;
-    private OverlayViewZPI overlayView;
+    private CrosshairViewZPI overlayView;
     private Runnable updateRunnable;
-    private boolean isAimModeOn = false;
     private Handler distanceHandler;
+    private Queue<Float> recentReadings = new LinkedList<>();
+    private boolean isAimModeOn = false;
     private float noseObstacleDistance = 100;
     private long lastValidReadingTime = 0;
-    private int INVALID_DISTANCE = 100;
-    private Queue<Float> recentReadings = new LinkedList<>();
+    private Button btn_fire;
+    private Button btn_aim;
+    private TextView textOverlayView;
+    private View greenTintOverlay;
 
     public FullScreenVideoViewZPI(Context context) {
         super(context);
         init(context);
     }
 
+    public FullScreenVideoViewZPI(Context context, MainContent mainContent) {
+        super(context);
+        init(context);
+        this.mainContent = mainContent;
+    }
+
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
         DJISampleApplication.getEventBus().post(new MainActivity.RequestStartFullScreenEvent());
+        enableFullscreenMode();
     }
 
     @Override
     public void onDetachedFromWindow() {
         super.onDetachedFromWindow();
         DJISampleApplication.getEventBus().post(new MainActivity.RequestEndFullScreenEvent());
+        disableFullscreenMode();
         circlesHandler.removeCallbacks(updateRunnable);
         distanceHandler.removeCallbacks(distanceChecker);
+        distanceHandler.removeCallbacks(distanceTextUpdater);
     }
+
 
     private void init(Context context) {
         LayoutInflater.from(context).inflate(R.layout.view_full_screen_video_zpi, this, true);
@@ -75,6 +90,9 @@ public class FullScreenVideoViewZPI extends LinearLayout implements PresentableV
         btn_fire = findViewById(R.id.btn_fire);
         btn_aim = findViewById(R.id.btn_aim);
         overlayView = findViewById(R.id.overlay_view);
+        textOverlayView = findViewById(R.id.text_overlay_view);
+        greenTintOverlay = findViewById(R.id.green_tint_overlay);
+
 
         if (VideoFeeder.getInstance() != null) {
             setupVideoFeedAndCamera();
@@ -83,7 +101,28 @@ public class FullScreenVideoViewZPI extends LinearLayout implements PresentableV
         setupButtons();
         setupObstacleDistanceDetection();
         setupCircleHandler();
-        startDistanceCheck();
+        startDistanceHandler();
+    }
+
+    private void enableFullscreenMode() {
+        View decorView = ((MainActivity) getContext()).getWindow().getDecorView();
+        decorView.setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                        | View.SYSTEM_UI_FLAG_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+        );
+    }
+
+    private void disableFullscreenMode() {
+        mainContent.enableButton();
+        View decorView = ((MainActivity) getContext()).getWindow().getDecorView();
+        decorView.setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+        );
     }
 
     private void setupCircleHandler() {
@@ -111,10 +150,14 @@ public class FullScreenVideoViewZPI extends LinearLayout implements PresentableV
     }
 
     private void updateOverlayCircles() {
-        if (isAimModeOn) {
+        // Check conditions for displaying crosshair
+        boolean shouldShowCrosshair = isAimModeOn && noseObstacleDistance < THRESHOLD_DISTANCE;
+
+        if (shouldShowCrosshair) {
+            btn_fire.setEnabled(true);
+            // Calculate the radii based on the error distance and the CEP multipliers
             float errorDistance = noseObstacleDistance * 10;
 
-            // Calculate the radii based on the error distance and the CEP multipliers
             float radius50 = errorDistance * 0.6745f;
             float radius93 = errorDistance * 2.0f;
             float radius99 = errorDistance * 2.576f;
@@ -126,7 +169,14 @@ public class FullScreenVideoViewZPI extends LinearLayout implements PresentableV
             radius99 *= scaleFactor;
 
             overlayView.updateRadii(radius50, radius93, radius99);
+            overlayView.showCrosshair(true);
+        } else {
+            btn_fire.setEnabled(false);
+            // Hide the crosshair
+            overlayView.showCrosshair(false);
         }
+        // Always redraw the overlayView to show distance text
+        overlayView.invalidate();
     }
 
 
@@ -197,8 +247,8 @@ public class FullScreenVideoViewZPI extends LinearLayout implements PresentableV
 
     private void aim() {
         isAimModeOn = !isAimModeOn;
-        btn_fire.setEnabled(isAimModeOn);
         overlayView.showCrosshair(isAimModeOn);
+        greenTintOverlay.setVisibility(isAimModeOn ? View.VISIBLE : View.GONE);
         displayAimModeToastMsg();
     }
 
@@ -239,8 +289,10 @@ public class FullScreenVideoViewZPI extends LinearLayout implements PresentableV
                         return;
                     }
                     float minReading = INVALID_DISTANCE;
-                    for (int i = 1; i <= 2; i++) {
-                        float distance = visionDetectionSectorArray[i].getObstacleDistanceInMeters();
+                    for (ObstacleDetectionSector sector : visionDetectionSectorArray) {
+                        float distance = sector.getObstacleDistanceInMeters();
+                    /*for (int i = 1; i <= 2; i++) {
+                        float distance = visionDetectionSectorArray[i].getObstacleDistanceInMeters();*/
                         if (distance >= 0 && distance != 100 && distance < minReading) { // ignore invalid readings of 100 meters
                             minReading = distance;
                             lastValidReadingTime = System.currentTimeMillis(); // update the last valid reading time
@@ -254,9 +306,10 @@ public class FullScreenVideoViewZPI extends LinearLayout implements PresentableV
         }
     }
 
-    private void startDistanceCheck() {
+    private void startDistanceHandler() {
         distanceHandler = new Handler();
         distanceHandler.post(distanceChecker);
+        distanceHandler.post(distanceTextUpdater);
     }
 
     private final Runnable distanceChecker = new Runnable() {
@@ -277,6 +330,16 @@ public class FullScreenVideoViewZPI extends LinearLayout implements PresentableV
 
             recentReadings.clear(); // clear readings for the next time window
             distanceHandler.postDelayed(this, DISTANCE_UPDATE_DELAY_TIME);
+        }
+    };
+
+    private final Runnable distanceTextUpdater = new Runnable() {
+        @Override
+        public void run() {
+            String distanceText = "Obstacle Distance: " + String.format("%.2f m", noseObstacleDistance);
+            textOverlayView.setText(distanceText);
+
+            distanceHandler.postDelayed(this, 500);
         }
     };
 }

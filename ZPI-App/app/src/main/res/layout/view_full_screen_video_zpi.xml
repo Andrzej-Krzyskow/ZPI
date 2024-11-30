@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     android:windowActionBar="false">
 
+    <!-- Video Feed View -->
     <com.dji.sdk.sample.internal.utils.VideoFeedView
         android:id="@+id/video_feed_view"
         android:layout_width="0dp"
@@ -15,16 +16,74 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <!-- Artificial Horizon View -->
+    <com.dji.sdk.sample.internal.view.ArtificialHorizonViewZPI
+        android:id="@+id/artificial_horizon_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@android:color/transparent"
+        app:layout_constraintTop_toTopOf="@id/video_feed_view"
+        app:layout_constraintBottom_toBottomOf="@id/video_feed_view"
+        app:layout_constraintStart_toStartOf="@id/video_feed_view"
+        app:layout_constraintEnd_toEndOf="@id/video_feed_view" />
+
+    <!-- Crosshair View -->
     <com.dji.sdk.sample.internal.view.CrosshairViewZPI
         android:id="@+id/overlay_view"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@android:color/transparent"
-        app:layout_constraintBottom_toBottomOf="@+id/video_feed_view"
-        app:layout_constraintEnd_toEndOf="@+id/video_feed_view"
-        app:layout_constraintStart_toStartOf="@+id/video_feed_view"
-        app:layout_constraintTop_toTopOf="@+id/video_feed_view" />
+        app:layout_constraintBottom_toBottomOf="@id/video_feed_view"
+        app:layout_constraintEnd_toEndOf="@id/video_feed_view"
+        app:layout_constraintStart_toStartOf="@id/video_feed_view"
+        app:layout_constraintTop_toTopOf="@id/video_feed_view" />
 
+    <!-- Altitude TextView -->
+    <TextView
+        android:id="@+id/tv_altitude"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
+        android:background="@drawable/rounded_rectangle_background"
+        android:padding="8dp"
+        android:text="Altitude: -- m"
+        android:textColor="@android:color/white"
+        android:textSize="16sp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <!-- Speed TextView -->
+    <TextView
+        android:id="@+id/tv_speed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/rounded_rectangle_background"
+        android:padding="8dp"
+        android:text="Speed: -- m/s"
+        android:textColor="@android:color/white"
+        android:textSize="16sp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Gyroscope Data TextView -->
+    <TextView
+        android:id="@+id/tv_gyroscope"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="16dp"
+        android:background="@drawable/rounded_rectangle_background"
+        android:padding="8dp"
+        android:text="Pitch: --°\nRoll: --°\nYaw: --°"
+        android:textColor="@android:color/white"
+        android:textSize="16sp"
+        app:layout_constraintTop_toBottomOf="@id/tv_altitude"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <!-- Text Overlay View -->
     <TextView
         android:id="@+id/text_overlay_view"
         android:layout_width="wrap_content"
@@ -36,24 +95,26 @@
         android:text=""
         android:textColor="@android:color/white"
         android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@+id/video_feed_view"
+        app:layout_constraintBottom_toTopOf="@id/video_feed_view"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="parent"
         app:layout_constraintVertical_bias="0.15" />
 
+    <!-- Green Tint Overlay -->
     <View
         android:id="@+id/green_tint_overlay"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@drawable/circular_green_tint_zpi"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@+id/btn_aim"
-        app:layout_constraintEnd_toEndOf="@+id/btn_aim"
-        app:layout_constraintStart_toStartOf="@+id/btn_aim"
-        app:layout_constraintTop_toTopOf="@+id/btn_aim" />
+        app:layout_constraintBottom_toBottomOf="@id/btn_aim"
+        app:layout_constraintEnd_toEndOf="@id/btn_aim"
+        app:layout_constraintStart_toStartOf="@id/btn_aim"
+        app:layout_constraintTop_toTopOf="@id/btn_aim" />
 
+    <!-- Aim Button at Bottom-Left -->
     <Button
         android:id="@+id/btn_aim"
         style="@style/btn_zpi"
@@ -62,6 +123,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
+    <!-- Fire Button at Bottom-Right -->
     <Button
         android:id="@+id/btn_fire"
         style="@style/btn_zpi"

@@ -54,6 +54,13 @@
         app:layout_constraintStart_toStartOf="@+id/btn_aim"
         app:layout_constraintTop_toTopOf="@+id/btn_aim" />
 
+    <Button
+        android:id="@+id/btn_aim"
+        style="@style/btn_zpi"
+        android:layout_margin="16dp"
+        android:text="@string/aim_zpi"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/btn_fire"
@@ -62,13 +69,6 @@
         android:enabled="false"
         android:text="@string/shoot_zpi"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
-    <Button
-        android:id="@+id/btn_aim"
-        style="@style/btn_zpi"
-        android:layout_marginBottom="10dp"
-        android:text="@string/aim_zpi"
-        app:layout_constraintBottom_toTopOf="@+id/btn_fire"
-        app:layout_constraintStart_toStartOf="@+id/btn_fire" />
 </androidx.constraintlayout.widget.ConstraintLayout>

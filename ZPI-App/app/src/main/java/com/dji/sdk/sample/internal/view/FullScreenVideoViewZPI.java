@@ -32,6 +32,7 @@ import dji.sdk.flightcontroller.FlightAssistant;
 import dji.sdk.flightcontroller.FlightController;
 import dji.sdk.products.Aircraft;
 import dji.sdk.sdkmanager.DJISDKManager;
+
 public class FullScreenVideoViewZPI extends LinearLayout implements PresentableView {
 
     public static final int INVALID_READING_LIMIT_TIME = 2000;
@@ -55,11 +56,8 @@ public class FullScreenVideoViewZPI extends LinearLayout implements PresentableV
     private Button btn_aim;
     private TextView textOverlayView;
     private View greenTintOverlay;
-
-    // New TextViews for altitude, speed, and gyroscope data
     private TextView tvAltitude;
     private TextView tvSpeed;
-    private TextView tvGyroscope;
     private ArtificialHorizonViewZPI artificialHorizonView;
 
     public FullScreenVideoViewZPI(Context context) {
@@ -103,13 +101,11 @@ public class FullScreenVideoViewZPI extends LinearLayout implements PresentableV
         textOverlayView = findViewById(R.id.text_overlay_view);
         greenTintOverlay = findViewById(R.id.green_tint_overlay);
 
-        // Initialize new TextViews
         tvAltitude = findViewById(R.id.tv_altitude);
         tvSpeed = findViewById(R.id.tv_speed);
-        tvGyroscope = findViewById(R.id.tv_gyroscope);
 
-        // Initialize Artificial Horizon View
         artificialHorizonView = findViewById(R.id.artificial_horizon_view);
+        artificialHorizonView.setVisibility(View.GONE);
 
         if (VideoFeeder.getInstance() != null) {
             setupVideoFeedAndCamera();
@@ -268,6 +264,7 @@ public class FullScreenVideoViewZPI extends LinearLayout implements PresentableV
         isAimModeOn = !isAimModeOn;
         overlayView.showCrosshair(isAimModeOn);
         greenTintOverlay.setVisibility(isAimModeOn ? View.VISIBLE : View.GONE);
+        artificialHorizonView.setVisibility(isAimModeOn ? View.VISIBLE : View.GONE);
         displayAimModeToastMsg();
     }
 
@@ -379,7 +376,6 @@ public class FullScreenVideoViewZPI extends LinearLayout implements PresentableV
             });
         }
     }
-
     private void updateDroneState(FlightControllerState state) {
         // Update Altitude
         final double altitude = state.getAircraftLocation().getAltitude();
@@ -398,17 +394,14 @@ public class FullScreenVideoViewZPI extends LinearLayout implements PresentableV
         final Attitude attitude = state.getAttitude();
         final double pitch = attitude.pitch;
         final double roll = attitude.roll;
-        final double yaw = attitude.yaw;
 
         // Update UI on the main thread
         post(() -> {
             tvAltitude.setText(String.format("Altitude: %.1f m", altitude));
             tvSpeed.setText(String.format("Speed: %.1f m/s", speed));
-            tvGyroscope.setText(String.format("Pitch: %.1f°\nRoll: %.1f°\nYaw: %.1f°", pitch, roll, yaw));
 
-            // Update Artificial Horizon
             if (artificialHorizonView != null) {
-                artificialHorizonView.updateAttitude(pitch, roll);
+                artificialHorizonView.updateAttitude((float) pitch, (float) roll);
             }
         });
     }

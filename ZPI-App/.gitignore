@@ -67,6 +67,15 @@ proguard/
 ehthumbs.db
 Thumbs.db
 
+# OpenCV CMake build files
+/opencv/.cxx/cmake/debug/
+*.ninja_deps
+*.ninja_log
+*.json
+*.log
+*.a
+*.txt
+
 # Import summary file
 import-summary.txt
 

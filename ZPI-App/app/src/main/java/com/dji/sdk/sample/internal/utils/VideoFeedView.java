@@ -1,6 +1,7 @@
 package com.dji.sdk.sample.internal.utils;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.util.AttributeSet;
 import android.view.SurfaceHolder;
@@ -37,6 +38,9 @@ public class VideoFeedView extends SurfaceView {
         Observable.timer(100, TimeUnit.MICROSECONDS).observeOn(AndroidSchedulers.mainThread()).repeat();
     private Subscription subscription;
     private SurfaceHolder surfaceHolder;
+
+    //detection
+    private FrameProcessor frameProcessor;
 
     //endregion
 
@@ -95,21 +99,30 @@ public class VideoFeedView extends SurfaceView {
         });
 
         videoDataListener = new VideoFeeder.VideoDataListener() {
-
             @Override
             public void onReceive(byte[] videoBuffer, int size) {
-
                 lastReceivedFrameTime.set(System.currentTimeMillis());
 
                 if (codecManager != null) {
-                    codecManager.sendDataToDecoder(videoBuffer,
-                                                   size,
-                                                   isPrimaryVideoFeed
-                                                   ? UsbAccessoryService.VideoStreamSource.Camera.getIndex()
-                                                   : UsbAccessoryService.VideoStreamSource.Fpv.getIndex());
+                    codecManager.sendDataToDecoder(videoBuffer, size,
+                            isPrimaryVideoFeed
+                                    ? UsbAccessoryService.VideoStreamSource.Camera.getIndex()
+                                    : UsbAccessoryService.VideoStreamSource.Fpv.getIndex());
+
+                    // Use the listener to get the Bitmap
+                    codecManager.getBitmap(new DJICodecManager.OnGetBitmapListener() {
+                        @Override
+                        public void onGetBitmap(Bitmap bitmap) {
+                            // Pass the frame to the FrameProcessor if it's set
+                            if (frameProcessor != null && bitmap != null) {
+                                frameProcessor.processFrame(bitmap);
+                            }
+                        }
+                    });
                 }
             }
         };
+
 
         subscription = timer.subscribe(new Action1() {
             @Override
@@ -154,5 +167,20 @@ public class VideoFeedView extends SurfaceView {
             subscription.unsubscribe();
         }
         VideoFeeder.getInstance().destroy();
+    }
+
+    // detection
+    public void registerFrameProcessor(FrameProcessor processor) {
+        this.frameProcessor = processor;
+    }
+    public interface FrameProcessor {
+        void processFrame(Bitmap bitmap);
+    }
+
+    public Bitmap getBitmap() {
+        setDrawingCacheEnabled(true);
+        Bitmap bitmap = Bitmap.createBitmap(getDrawingCache());
+        setDrawingCacheEnabled(false);
+        return bitmap;
     }
 }

@@ -1,0 +1,7 @@
+Executable : C:\Users\zuzek\AppData\Local\Android\Sdk\cmake\3.10.2.4988404\bin\ninja.exe
+arguments : 
+-C
+D:\ZPI_v2\ZPI-App\opencv\.cxx\cmake\debug\x86
+opencv_jni_shared
+jvmArgs : 
+

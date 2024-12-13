@@ -6,6 +6,7 @@
     <string name="camera_listview_full_screen_video_zpi">Full Screen Video</string>
     <string name="shoot_zpi">FIRE</string>
     <string name="aim_zpi">AIM</string>
+    <string name="detect_zpi">DETECT</string>
     <string name="sdk_registration_doing_message_zpi">Registering, wait…</string>
 
     <!-- DJI OOTB String -->

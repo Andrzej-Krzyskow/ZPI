@@ -59,6 +59,8 @@ import dji.sdk.sdkmanager.LDMModule;
 import dji.sdk.sdkmanager.LDMModuleType;
 import dji.sdk.useraccount.UserAccountManager;
 
+import org.opencv.android.OpenCVLoader;
+
 /**
  * Created by dji on 15/12/18.
  */
@@ -216,6 +218,13 @@ public class MainContent extends RelativeLayout {
 
     @Override
     protected void onAttachedToWindow() {
+        // Initialize OpenCV
+        if (!OpenCVLoader.initDebug()) {
+            Log.e(TAG, "OpenCV initialization failed");
+        } else {
+            Log.d(TAG, "OpenCV initialization succeeded");
+        }
+
         Log.d(TAG, "Comes into the onAttachedToWindow");
         if (!isInEditMode()) {
             refreshSDKRelativeUI();

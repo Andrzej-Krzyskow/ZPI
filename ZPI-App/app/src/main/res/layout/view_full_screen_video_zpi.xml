@@ -109,6 +109,18 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
+
+    <!-- Detect Button at Bottom-Left -->
+    <Button
+        android:id="@+id/btn_detect"
+        style="@style/btn_zpi"
+        android:layout_margin="16dp"
+        android:text="@string/detect_zpi"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toTopOf="@id/btn_aim"
+        app:layout_constraintStart_toStartOf="parent" />
+
+
     <!-- Fire Button at Bottom-Right -->
     <Button
         android:id="@+id/btn_fire"
@@ -118,5 +130,17 @@
         android:text="@string/shoot_zpi"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Bounding Box -->
+    <com.dji.sdk.sample.internal.view.ObjectDetectionOverlayView
+        android:id="@+id/object_detection_overlay"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toTopOf="@id/video_feed_view"
+        app:layout_constraintBottom_toBottomOf="@id/video_feed_view"
+        app:layout_constraintStart_toStartOf="@id/video_feed_view"
+        app:layout_constraintEnd_toEndOf="@id/video_feed_view"
+        android:background="@android:color/transparent" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

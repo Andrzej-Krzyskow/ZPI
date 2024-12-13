@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.hardware.usb.UsbManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -34,6 +35,8 @@ import java.util.Stack;
 
 import dji.sdk.sdkmanager.DJISDKManager;
 
+import org.opencv.android.OpenCVLoader;
+
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -58,6 +61,14 @@ public class MainActivity extends AppCompatActivity {
         setupActionBar();
         contentFrameLayout = (FrameLayout) findViewById(R.id.framelayout_content);
         initParams();
+
+        // openCV check
+        if (!OpenCVLoader.initDebug()) {
+            Log.e("OpenCV", "Failed to initialize OpenCV");
+        } else {
+            Log.d("OpenCV", "OpenCV initialized successfully");
+        }
+
     }
 
     @Override

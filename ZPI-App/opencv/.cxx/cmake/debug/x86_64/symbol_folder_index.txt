@@ -1,0 +1,1 @@
+D:\ZPI_v2\ZPI-App\opencv\build\intermediates\cmake\debug\obj\x86_64

@@ -1,0 +1,2 @@
+ninja: Entering directory `D:\ZPI_v2\ZPI-App\opencv\.cxx\cmake\debug\x86_64'
+ninja: no work to do.

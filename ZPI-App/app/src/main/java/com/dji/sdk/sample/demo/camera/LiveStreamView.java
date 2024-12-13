@@ -4,6 +4,8 @@ import android.app.AlertDialog;
 import android.app.Service;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.res.AssetFileDescriptor;
+import android.graphics.Bitmap;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -22,6 +24,11 @@ import com.dji.sdk.sample.internal.view.PresentableView;
 
 import dji.sdk.sdkmanager.LiveVideoBitRateMode;
 import dji.sdk.sdkmanager.LiveVideoResolution;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -31,6 +38,15 @@ import dji.sdk.base.BaseProduct;
 import dji.sdk.camera.VideoFeeder;
 import dji.sdk.sdkmanager.DJISDKManager;
 import dji.sdk.sdkmanager.LiveStreamManager;
+
+// detection
+import org.tensorflow.lite.Interpreter;
+import org.opencv.android.Utils;
+import org.opencv.core.Mat;
+import org.opencv.core.Rect;
+import org.opencv.core.Scalar;
+import org.opencv.core.Size;
+import org.opencv.imgproc.Imgproc;
 
 import static com.dji.sdk.sample.internal.utils.ToastUtils.showToast;
 
@@ -65,6 +81,9 @@ public class LiveStreamView extends LinearLayout implements PresentableView, Vie
     private boolean firstTimetoStartAutoBitRate = true;
     private int lastBitRate = 2048;
 
+    // detection
+    private Interpreter tfliteInterpreter;
+
     private LiveStreamManager.OnLiveChangeListener listener;
     private LiveStreamManager.LiveStreamVideoSource currentVideoSource = LiveStreamManager.LiveStreamVideoSource.Primary;
     private static final String URL_KEY = "sp_stream_url";
@@ -85,6 +104,22 @@ public class LiveStreamView extends LinearLayout implements PresentableView, Vie
         primaryVideoFeedView = (VideoFeedView) findViewById(R.id.video_view_primary_video_feed);
         primaryVideoFeedView.registerLiveVideo(VideoFeeder.getInstance().getPrimaryVideoFeed(), true);
 
+        // detection
+        primaryVideoFeedView.registerFrameProcessor(new VideoFeedView.FrameProcessor() {
+            @Override
+            public void processFrame(Bitmap bitmap) {
+                detectTrees(bitmap);
+            }
+        });
+
+
+        // frame processing
+        primaryVideoFeedView.registerFrameProcessor(new VideoFeedView.FrameProcessor() {
+            @Override
+            public void processFrame(Bitmap bitmap) {
+                detectTrees(bitmap);
+            }
+        });
         fpvVideoFeedView = (VideoFeedView) findViewById(R.id.video_view_fpv_video_feed);
         fpvVideoFeedView.registerLiveVideo(VideoFeeder.getInstance().getSecondaryVideoFeed(), false);
         if (Helper.isMultiStreamPlatform()){
@@ -123,6 +158,9 @@ public class LiveStreamView extends LinearLayout implements PresentableView, Vie
         showLiveStartTimeBtn.setOnClickListener(this);
         showCurrentVideoSourceBtn.setOnClickListener(this);
         changeVideoSourceBtn.setOnClickListener(this);
+
+        // detection
+        loadModel(context);
     }
 
     private void initListener() {
@@ -441,4 +479,62 @@ public class LiveStreamView extends LinearLayout implements PresentableView, Vie
                 break;
         }
     }
+
+    // detection
+    private void loadModel(Context context) {
+        try {
+            tfliteInterpreter = new Interpreter(loadModelFile(context, "model_trunk.tflite"));
+        } catch (Exception e) {
+            ToastUtils.setResultToToast("Error loading TFLite model: " + e.getMessage());
+        }
+    }
+
+    public static MappedByteBuffer loadModelFile(Context context, String modelPath) throws IOException {
+        AssetFileDescriptor fileDescriptor = context.getAssets().openFd(modelPath);
+        FileInputStream inputStream = new FileInputStream(fileDescriptor.getFileDescriptor());
+        FileChannel fileChannel = inputStream.getChannel();
+        long startOffset = fileDescriptor.getStartOffset();
+        long declaredLength = fileDescriptor.getDeclaredLength();
+        return fileChannel.map(FileChannel.MapMode.READ_ONLY, startOffset, declaredLength);
+    }
+
+    private void detectTrees(Bitmap bitmap) {
+        Mat frame = new Mat();
+        Utils.bitmapToMat(bitmap, frame);
+
+        // preprocess
+        Imgproc.resize(frame, frame, new Size(640, 640));
+        Imgproc.cvtColor(frame, frame, Imgproc.COLOR_RGBA2RGB);
+
+        // model input
+        float[][][][] input = new float[1][300][300][3];
+        for (int i = 0; i < 300; i++) {
+            for (int j = 0; j < 300; j++) {
+                double[] pixel = frame.get(i, j);
+                input[0][i][j][0] = (float) pixel[0] / 255.0f;
+                input[0][i][j][1] = (float) pixel[1] / 255.0f;
+                input[0][i][j][2] = (float) pixel[2] / 255.0f;
+            }
+        }
+
+        // model output
+        float[][][] output = new float[1][10][4]; // model predicts 10 bounding boxes
+
+        tfliteInterpreter.run(input, output);
+
+        // draw
+        for (float[] box : output[0]) {
+            Rect rect = new Rect(
+                    (int) (box[1] * bitmap.getWidth()),
+                    (int) (box[0] * bitmap.getHeight()),
+                    (int) ((box[3] - box[1]) * bitmap.getWidth()),
+                    (int) ((box[2] - box[0]) * bitmap.getHeight())
+            );
+            Imgproc.rectangle(frame, rect, new Scalar(0, 255, 0), 2);
+        }
+
+        // bitmap
+        Utils.matToBitmap(frame, bitmap);
+    }
+
 }
